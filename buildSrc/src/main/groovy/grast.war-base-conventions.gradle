@@ -1,0 +1,40 @@
+plugins {
+    id 'war'
+}
+
+project.ext {
+    unpackedWarDir = "unpacked-war"
+}
+
+ext {
+    getFileWithValidation = { path ->
+        def file = file(path)
+        if (!file.exists()) {
+            throw new GradleException("Required file not found: $path")
+        }
+        return path
+    }
+}
+
+tasks.register('distWar', War) {
+
+}
+
+task unpackWar(type: Copy) {
+    inputs.file war.archivePath
+    outputs.files fileTree("$buildDir/$unpackedWarDir")
+    from zipTree(war.archivePath)
+    into file("$buildDir/$unpackedWarDir")
+}
+
+war {
+    finalizedBy unpackWar
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: '0.9.20'
+}

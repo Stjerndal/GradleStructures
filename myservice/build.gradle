@@ -1,0 +1,18 @@
+plugins {
+    id 'grast.war-conventions'
+}
+
+warConventions {
+    //Override the default ones from war-conventions, root context need special ones
+    webXmlPath = "src/main/resources/servlet/web.xml"
+    anotherOneXmlPath = "src/main/resources/servlet/anotherOne.xml"
+}
+
+distWar.doFirst {
+    archiveName = 'MyService.war'
+}
+
+
+dependencies {
+    implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
+}

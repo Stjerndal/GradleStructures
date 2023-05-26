@@ -1,0 +1,3 @@
+rootProject.name = 'grast'
+include 'shared-web'
+include 'myservice'

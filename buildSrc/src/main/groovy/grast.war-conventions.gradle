@@ -1,0 +1,37 @@
+plugins {
+    id 'grast.war-base-conventions'
+}
+
+project.ext {
+    jacksonVersion = '2.9.1'
+    webXmlFile = file("${project(':shared-web').projectDir}/src/main/resources/web.xml")
+}
+
+extensions.create('warConventions', WarConventions)
+    
+    tasks.withType(War).configureEach { warTask ->
+        println "for task $warTask, webXmlPath is $warConventions.webXmlPath.orNull"
+        def webXmlFile = project.getFileWithValidation(warConventions.webXmlPath.orNull ?: "${project(':shared-web').projectDir}/src/main/resources/web.xml")
+        def anotherOneFile = project.getFileWithValidation(warConventions.anotherOneXmlPath.orNull ?: "${project(':shared-web').projectDir}/src/main/resources/security/anotherOne.xml")
+
+        warTask.webInf {
+            from(webXmlFile)
+            from(anotherOneFile)
+        }
+    }
+
+dependencies {
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: jacksonVersion
+}
+
+abstract class WarConventions {
+    @Input
+    abstract Property<String> getWebXmlPath()
+    @Input
+    abstract Property<String> getanotherOneXmlPath()
+
+    WarConventions() {
+        webXmlPath.convention(null)
+        anotherOneXmlPath.convention(null)
+    }
+}
